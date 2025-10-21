@@ -1,4 +1,8 @@
 package ie.setu.languagelearnerapp.model
 
-class WordModel {
-}
+data class WordModel (
+    var word: String = "",
+    var translation: String = "",
+    var language: String = "",
+    var level: String = ""
+)
