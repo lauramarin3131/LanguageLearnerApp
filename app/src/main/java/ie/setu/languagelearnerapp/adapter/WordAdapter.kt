@@ -10,7 +10,7 @@ import ie.setu.languagelearnerapp.R
 import ie.setu.languagelearnerapp.model.WordModel
 
 class WordAdapter(
-        private var words: MutableList<WordModel>,
+        var words: MutableList<WordModel>,
         private val onDeleteClick: (Int) -> Unit
     ) : RecyclerView.Adapter<WordAdapter.WordViewHolder>() {
     fun updateList(newWords: List<WordModel>) {
@@ -38,6 +38,7 @@ class WordAdapter(
         holder.tvTranslation.text = word.translation
         holder.tvLanguage.text = word.language
         holder.tvLevel.text = word.level
+
         holder.btnDelete.setOnClickListener {
             onDeleteClick(position)
         }
