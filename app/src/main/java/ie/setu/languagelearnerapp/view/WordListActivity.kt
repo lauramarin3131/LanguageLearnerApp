@@ -16,6 +16,9 @@ import ie.setu.languagelearnerapp.R
 import ie.setu.languagelearnerapp.adapter.WordAdapter
 import com.google.android.material.snackbar.Snackbar
 import ie.setu.languagelearnerapp.repository.WordRepository
+import android.content.Intent
+import android.widget.CheckBox
+import androidx.appcompat.widget.Toolbar
 
 class WordListActivity : AppCompatActivity() {
 
@@ -23,6 +26,10 @@ class WordListActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_word_list)
+        val toolbar = findViewById<Toolbar>(R.id.toolbarWordList)
+        setSupportActionBar(toolbar)
+        supportActionBar?.title = "Word List"
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
         WordRepository.load(this)
         title = "Word List"
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
@@ -30,18 +37,32 @@ class WordListActivity : AppCompatActivity() {
         val recyclerView = findViewById<RecyclerView>(R.id.recyclerViewWords)
 
         WordRepository.load(this)
-        adapter = WordAdapter(WordRepository.getAll().toMutableList()) { position ->
-            WordRepository.deleteWord(this, position)
-            adapter.updateList(WordRepository.getAll())
-            Snackbar.make(
-                findViewById(R.id.recyclerViewWords),
-                "Word deleted",
-                Snackbar.LENGTH_SHORT
-            ).show()
-        }
+        adapter = WordAdapter(
+            WordRepository.getAll().toMutableList(),
+            onDeleteClick = { position ->
+                WordRepository.deleteWord(this, position)
+                adapter.updateList(WordRepository.getAll())
+                Snackbar.make(
+                    findViewById(R.id.recyclerViewWords),
+                    "Word deleted",
+                    Snackbar.LENGTH_SHORT
+                ).show() },
+            onEditClick = { word ->
+                val intent = Intent(this, EditWordActivity::class.java)
+                intent.putExtra("word", word)
+                startActivity(intent)
+            },
+            onFavoriteClick = { word ->
+                WordRepository.toggleFavorite(this, word)
+                adapter.updateList(WordRepository.getAll())
+            }
+        )
         recyclerView.adapter = adapter
         recyclerView.layoutManager = LinearLayoutManager(this)
         val spinnerLanguage = findViewById<Spinner>(R.id.spinnerLanguageFilter)
+        val checkBoxFavorites = findViewById<CheckBox>(R.id.checkBoxFavorites)
+        checkBoxFavorites.setOnCheckedChangeListener { _, _ -> applyFilters() }
+
         val languages =
             listOf("All", "English 🇬🇧", "Spanish 🇪🇸", "French 🇫🇷", "German 🇩🇪", "Italian 🇮🇹")
         spinnerLanguage.adapter =
@@ -85,11 +106,15 @@ class WordListActivity : AppCompatActivity() {
     private fun applyFilters() {
         val spinnerLanguage = findViewById<Spinner>(R.id.spinnerLanguageFilter)
         val pickerLevel = findViewById<NumberPicker>(R.id.pickerLevelFilter)
+        val checkBoxFavorites = findViewById<CheckBox>(R.id.checkBoxFavorites)
+
         val lang = spinnerLanguage.selectedItem.toString()
         val lvl = pickerLevel.value
+        val showFavOnly = checkBoxFavorites.isChecked
         val filtered = WordRepository.getAll().filter {
             (lang == "All" || it.language == lang) &&
-                    (lvl == 0 || it.level.toInt() == lvl)
+                    (lvl == 0 || it.level.toInt() == lvl)&&
+                    (!showFavOnly || it.isFavorite)
         }
         adapter.updateList(filtered.toMutableList())
     }
@@ -131,6 +156,11 @@ class WordListActivity : AppCompatActivity() {
         if (item.itemId == android.R.id.home) finish()
         return super.onOptionsItemSelected(item)
     }
+    override fun onResume() {
+        super.onResume()
+        adapter.updateList(WordRepository.getAll().toMutableList())
+    }
+
 }
 
 

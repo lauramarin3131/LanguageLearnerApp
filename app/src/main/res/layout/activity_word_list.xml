@@ -5,31 +5,44 @@
     android:orientation="vertical"
     android:padding="16dp"
     android:background="@color/colorPrimary">
-    <LinearLayout
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbarWordList"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:weightSum="3"
-        android:layout_marginBottom="8dp">
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/colorPrimary"
+        android:titleTextColor="@android:color/white"
+        android:title="Word List" />
+    <LinearLayout
+         android:layout_width="match_parent"
+         android:layout_height="wrap_content"
+         android:orientation="horizontal"
+         android:gravity="center_vertical"
+         android:paddingBottom="8dp">
+        <CheckBox
+            android:id="@+id/checkBoxFavorites"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Show favorites only"
+            android:textColor="@android:color/black"
+            android:padding="8dp"/>
+
         <Spinner
             android:id="@+id/spinnerLanguageFilter"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:background="@color/white"
-            android:spinnerMode="dropdown" />
+            android:layout_weight="1" />
+
         <NumberPicker
             android:id="@+id/pickerLevelFilter"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1" />
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
         <Spinner
             android:id="@+id/spinnerSort"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:background="@color/white"
-            android:spinnerMode="dropdown" />
+             />
     </LinearLayout>
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewWords"
