@@ -4,5 +4,6 @@ data class WordModel (
     var word: String = "",
     var translation: String = "",
     var language: String = "",
-    var level: String = ""
+    var level: String = "",
+    var date: String = ""
 )

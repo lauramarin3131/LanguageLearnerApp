@@ -3,8 +3,8 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/colorPrimary"
     android:padding="24dp">
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -14,8 +14,10 @@
             android:id="@+id/etWord"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="@color/white"
             android:hint="Word"
-            android:inputType="textCapWords" />
+            android:padding="12dp"
+            android:textColor="@color/black"/>
 
         <EditText
             android:id="@+id/etTranslation"
@@ -24,30 +26,37 @@
             android:hint="Translation"
             android:inputType="textCapSentences" />
 
-        <EditText
-            android:id="@+id/etLanguage"
+        <Spinner
+            android:id="@+id/spinnerLanguage"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Language" />
+            android:layout_marginTop="8dp"
+            android:background="@color/white"/>
 
-        <EditText
-            android:id="@+id/etLevel"
-            android:layout_width="match_parent"
+        <NumberPicker
+            android:id="@+id/pickerLevel"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:hint="Level" />
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="8dp"/>
+
 
         <Button
             android:id="@+id/btnSaveWord"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Save"
-            android:layout_marginTop="16dp" />
+            android:backgroundTint="@color/colorAccent"
+            android:textColor="@color/white"
+            android:layout_marginTop="16dp"/>
 
         <Button
             android:id="@+id/btnCancel"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Cancel"
-            android:layout_marginTop="8dp" />
+            android:backgroundTint="@color/colorPrimaryDark"
+            android:textColor="@color/white"
+            android:layout_marginTop="8dp"/>
     </LinearLayout>
 </ScrollView>
