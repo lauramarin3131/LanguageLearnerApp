@@ -69,7 +69,13 @@ class AddWordActivity : AppCompatActivity() {
                          }
 
             if (ok) {
-                WordRepository.addWord(this, WordModel(w, t, lg, lv, date = System.currentTimeMillis().toString()))
+                WordRepository.addWord(this,WordModel(
+                                                            word = w,
+                                                            translation = t,
+                                                            language = lg,
+                                                            level = lv,
+                                                            date = System.currentTimeMillis().toString())
+                )
                 Snackbar.make(it, "Word added successfully!", Snackbar.LENGTH_SHORT).show()
                 finish()
             }
