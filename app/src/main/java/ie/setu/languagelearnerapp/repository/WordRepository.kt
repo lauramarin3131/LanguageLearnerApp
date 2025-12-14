@@ -63,28 +63,33 @@ object WordRepository {
         save(context)
         Timber.Forest.i("Word added: ${word.word}")
     }
-    fun updateWord(context: Context, oldWord: WordModel, newWord: WordModel) {
-        val index = words.indexOfFirst { it.word == oldWord.word }
-        if (index != -1) {
-            words[index] = newWord
-            save(context)
-            Timber.Forest.i("Word updated: ${newWord.word}")
+    fun updateWord(context: Context, updated: WordModel) {
+        val index = words.indexOfFirst { it.id == updated.id }
+        if (index == -1) return
+
+        if (updated.word.isBlank() || updated.translation.isBlank()) return
+
+        val duplicate = words.any {
+            it.id != updated.id && it.word.equals(updated.word, ignoreCase = true)
         }
+        if (duplicate) return
+
+        words[index] = updated
+        save(context)
     }
-    fun toggleFavorite(context: Context, word: WordModel) {
-        val index = words.indexOfFirst { it.word == word.word }
-        if (index != -1) {
-            words[index].isFavorite = !words[index].isFavorite
-            save(context)
-            Timber.Forest.i("Favorite toggled for: ${word.word}")
-        }
+    fun toggleFavorite(context: Context, id: String) {
+        val index = words.indexOfFirst { it.id ==id }
+        if (index != -1)  return
+
+        words[index].isFavorite = !words[index].isFavorite
+        save(context)
     }
-    fun deleteWord(context: Context, position: Int) {
-        if (position in words.indices) {
-            val removed = words.removeAt(position)
-            save(context)
-            Timber.Forest.i("Word deleted: ${removed.word}")
-        }
+    fun deleteWord(context: Context, id:String) {
+        val index = words.indexOfFirst { it.id == id }
+        if (index == -1) return
+
+        words.removeAt(index)
+        save(context)
     }
 
     fun sortByLevel() {

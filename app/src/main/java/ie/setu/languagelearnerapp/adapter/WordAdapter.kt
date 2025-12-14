@@ -13,9 +13,9 @@ import androidx.core.content.ContextCompat
 
 class WordAdapter(
         var words: MutableList<WordModel>,
-        private val onDeleteClick: (Int) -> Unit,
+        private val onDeleteClick: (String) -> Unit,
         private val onEditClick: (WordModel) -> Unit,
-        private val onFavoriteClick: (WordModel) -> Unit
+        private val onFavoriteClick: (String) -> Unit
     ) : RecyclerView.Adapter<WordAdapter.WordViewHolder>() {
     fun updateList(newWords: List<WordModel>) {
         words.clear()
@@ -46,16 +46,22 @@ class WordAdapter(
         holder.tvLevel.text = word.level
 
         holder.btnDelete.setOnClickListener {
-            onDeleteClick(position)
+            onDeleteClick(word.id)
         }
-        holder.itemView.setOnClickListener { onEditClick(word) }
+        holder.itemView.setOnClickListener {
+            onEditClick(word)
+        }
         holder.btnFavorite.setImageResource(
             if (word.isFavorite) R.drawable.ic_star_filled else R.drawable.ic_star_border
         )
         holder.btnFavorite.setColorFilter(ContextCompat.getColor(holder.itemView.context, R.color.colorAccent))
         holder.btnFavorite.setOnClickListener {
-            onFavoriteClick(word)
+            onFavoriteClick(word.id)
         }
+        holder.btnEdit.setOnClickListener {
+            onEditClick(word)
+        }
+
     }
         override fun getItemCount(): Int = words.size
 
