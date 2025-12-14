@@ -11,12 +11,10 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import ie.setu.languagelearnerapp.R
 import ie.setu.languagelearnerapp.model.WordModel
-import android.content.Context
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
+import android.widget.Toast
 import ie.setu.languagelearnerapp.R.*
+import ie.setu.languagelearnerapp.repository.WordRepository
 
 
 class AddWordActivity : AppCompatActivity() {
@@ -51,7 +49,7 @@ class AddWordActivity : AppCompatActivity() {
         pickerLevel.maxValue = 5
         pickerLevel.value = 1
 
-        loadWords()
+        WordRepository.load(this)
         btnSave.setOnClickListener {
             val w = etWord.text.toString().trim()
             val t = etTranslation.text.toString().trim()
@@ -59,35 +57,25 @@ class AddWordActivity : AppCompatActivity() {
             val lv = pickerLevel.value.toString()
 
             var ok = true
-            if (w.isEmpty()) { etWord.error = "Required"; ok = false }
-            if (t.isEmpty()) { etTranslation.error = "Required"; ok = false }
+            if (w.isEmpty()) {
+                etWord.error = "Required"
+                Toast.makeText(this, "Word is required", Toast.LENGTH_SHORT).show()
+                ok = false
+            }
+            if (t.isEmpty()) {
+                etTranslation.error = "Required"
+                Toast.makeText(this, "Translation is required", Toast.LENGTH_SHORT).show()
+                ok = false
+                         }
 
             if (ok) {
-                words.add(WordModel(w, t, lg, lv))
-                saveWords()
+                WordRepository.addWord(this, WordModel(w, t, lg, lv, date = System.currentTimeMillis().toString()))
                 Snackbar.make(it, "Word added successfully!", Snackbar.LENGTH_SHORT).show()
                 finish()
             }
         }
 
         btnCancel.setOnClickListener { finish() }
-    }
-    private fun saveWords() {
-        val sharedPref = getSharedPreferences("LanguageLearnerPrefs", Context.MODE_PRIVATE)
-        val editor = sharedPref.edit()
-        val json = Gson().toJson(words)
-        editor.putString("words", json)
-        editor.apply()
-    }
-    private fun loadWords() {
-        val sharedPref = getSharedPreferences("LanguageLearnerPrefs", Context.MODE_PRIVATE)
-        val json = sharedPref.getString("words", null)
-        if (json != null) {
-            val type = object : TypeToken<ArrayList<WordModel>>() {}.type
-            val savedWords: ArrayList<WordModel> = Gson().fromJson(json, type)
-            words.clear()
-            words.addAll(savedWords)
-        }
     }
 }
 

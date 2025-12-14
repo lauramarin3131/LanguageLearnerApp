@@ -28,6 +28,7 @@ object WordRepository {
         }
     }
 
+
     private fun save(context: Context) {
         try {
             val json = gson.toJson(words)
@@ -43,11 +44,35 @@ object WordRepository {
     fun getAll(): List<WordModel> = words
 
     fun addWord(context: Context, word: WordModel) {
+
+        if (word.word.isBlank() || word.translation.isBlank()) {
+             Timber.Forest.w("Attempted to add invalid word")
+             return
+        }
+        if (words.any { it.word.equals(word.word, ignoreCase = true) }) {
+             Timber.Forest.w("Duplicate word: ${word.word}")
+             return
+        }
         words.add(word)
         save(context)
         Timber.Forest.i("Word added: ${word.word}")
     }
-
+    fun updateWord(context: Context, oldWord: WordModel, newWord: WordModel) {
+        val index = words.indexOfFirst { it.word == oldWord.word }
+        if (index != -1) {
+            words[index] = newWord
+            save(context)
+            Timber.Forest.i("Word updated: ${newWord.word}")
+        }
+    }
+    fun toggleFavorite(context: Context, word: WordModel) {
+        val index = words.indexOfFirst { it.word == word.word }
+        if (index != -1) {
+            words[index].isFavorite = !words[index].isFavorite
+            save(context)
+            Timber.Forest.i("Favorite toggled for: ${word.word}")
+        }
+    }
     fun deleteWord(context: Context, position: Int) {
         if (position in words.indices) {
             val removed = words.removeAt(position)
