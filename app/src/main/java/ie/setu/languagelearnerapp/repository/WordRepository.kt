@@ -19,6 +19,12 @@ object WordRepository {
                 val json = context.openFileInput(FILE_NAME).bufferedReader().use { it.readText() }
                 val type = object : TypeToken<MutableList<WordModel>>() {}.type
                 words = gson.fromJson(json, type) ?: mutableListOf()
+                words = words.map {
+                    if (it.id.isBlank()) it.copy(id = java.util.UUID.randomUUID().toString()) else it
+                }.toMutableList()
+
+                save(context)
+
                 Timber.Forest.i("Words loaded from file: ${words.size} items")
             } else {
                 Timber.Forest.i("No previous data found, starting fresh.")
