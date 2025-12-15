@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">LanguageLearnerApp</string>
+    <string name="hint_wordTitle">Word Title</string>
+    <string name="button_addWord">Add Word</string>
+    <string name="button_viewList">Show Word List</string>
+    <string name="prompt_filter_language">Filter by language</string>
+    <string name="prompt_sort">Sort by</string>
+
 </resources>
