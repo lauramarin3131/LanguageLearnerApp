@@ -23,6 +23,8 @@ import androidx.appcompat.widget.Toolbar
 class WordListActivity : AppCompatActivity() {
 
     private lateinit var adapter: WordAdapter
+    private var currentSortOption: String = "Alphabetical"
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_word_list)
@@ -39,9 +41,9 @@ class WordListActivity : AppCompatActivity() {
         WordRepository.load(this)
         adapter = WordAdapter(
             WordRepository.getAll().toMutableList(),
-            onDeleteClick = { position ->
-                WordRepository.deleteWord(this, position)
-                adapter.updateList(WordRepository.getAll())
+            onDeleteClick = { id ->
+                WordRepository.deleteWord(this, id)
+                applyFilters()
                 Snackbar.make(
                     findViewById(R.id.recyclerViewWords),
                     "Word deleted",
@@ -52,9 +54,9 @@ class WordListActivity : AppCompatActivity() {
                 intent.putExtra("word", word)
                 startActivity(intent)
             },
-            onFavoriteClick = { word ->
-                WordRepository.toggleFavorite(this, word)
-                adapter.updateList(WordRepository.getAll())
+            onFavoriteClick = { id ->
+                WordRepository.toggleFavorite(this, id)
+                applyFilters()
             }
         )
         recyclerView.adapter = adapter
@@ -96,7 +98,9 @@ class WordListActivity : AppCompatActivity() {
                 position: Int,
                 id: Long
             ) {
-                sortList(sortOptions[position])
+                currentSortOption = sortOptions[position]
+                applyFilters()
+
             }
 
             override fun onNothingSelected(parent: AdapterView<*>?) {}
@@ -111,24 +115,21 @@ class WordListActivity : AppCompatActivity() {
         val lang = spinnerLanguage.selectedItem.toString()
         val lvl = pickerLevel.value
         val showFavOnly = checkBoxFavorites.isChecked
+
         val filtered = WordRepository.getAll().filter {
             (lang == "All" || it.language == lang) &&
-                    (lvl == 0 || it.level.toInt() == lvl)&&
+                    (lvl == 0 || (it.level.toIntOrNull() ?: 0) == lvl) &&
                     (!showFavOnly || it.isFavorite)
         }
-        adapter.updateList(filtered.toMutableList())
+        val sorted = when (currentSortOption) {
+            "Alphabetical" -> filtered.sortedBy { it.word.lowercase() }
+            "Level" -> filtered.sortedBy { it.level.toIntOrNull() ?: 0 }
+            "Date Added" -> filtered.sortedBy { it.date.toLongOrNull() ?: 0L }
+            else -> filtered
+        }
+        adapter.updateList(sorted.toMutableList())  
     }
 
-    private fun sortList(option: String) {
-        val currentList = adapter.words
-        val sorted = when (option) {
-            "Alphabetical" -> currentList.sortedBy { it.word }
-            "Level" -> currentList.sortedBy { it.level.toInt() }
-            "Date Added" -> currentList.sortedBy { it.date }
-            else -> currentList
-        }
-        adapter.updateList(sorted.toMutableList())
-    }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.menu_word_list, menu)
@@ -158,7 +159,8 @@ class WordListActivity : AppCompatActivity() {
     }
     override fun onResume() {
         super.onResume()
-        adapter.updateList(WordRepository.getAll().toMutableList())
+        WordRepository.load(this)
+        applyFilters()
     }
 
 }
