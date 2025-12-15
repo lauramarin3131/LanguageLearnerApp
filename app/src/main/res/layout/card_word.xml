@@ -24,6 +24,7 @@
              android:textStyle="bold"
              android:textSize="18sp"
              android:textColor="@color/colorPrimaryDark" />
+
         <ImageButton
             android:id="@+id/btnSpeak"
             android:layout_width="wrap_content"
@@ -46,6 +47,20 @@
             android:focusableInTouchMode="false"
             android:clickable="true"/>
     </LinearLayout>
+    <ImageView
+        android:id="@+id/imgWord"
+        android:layout_width="match_parent"
+        android:layout_height="180dp"
+        android:layout_marginTop="8dp"
+        android:scaleType="centerCrop"
+        android:visibility="gone" />
+    <Button
+        android:id="@+id/btnViewImage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="View Image"
+        android:layout_marginTop="8dp"
+        android:visibility="gone" />
     <TextView
         android:id="@+id/tvTranslation"
         android:layout_width="wrap_content"
@@ -74,6 +89,8 @@
         android:focusable="false"
         android:focusableInTouchMode="false"
         android:clickable="true"/>
+
+
     <Button
         android:id="@+id/btnEdit"
         android:layout_width="wrap_content"

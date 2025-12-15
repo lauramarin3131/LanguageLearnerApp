@@ -70,7 +70,8 @@ class EditWordActivity : AppCompatActivity() {
                 word = etWord.text.toString().trim(),
                 translation = etTranslation.text.toString().trim(),
                 language = spinnerLanguage.selectedItem.toString(),
-                level = pickerLevel.value.toString()
+                level = pickerLevel.value.toString(),
+                imageUri = oldWord.imageUri
             )
             WordRepository.updateWord(this,  updated)
             Snackbar.make(it, "Word updated!", Snackbar.LENGTH_SHORT).show()
