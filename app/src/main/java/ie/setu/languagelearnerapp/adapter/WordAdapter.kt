@@ -10,6 +10,8 @@ import ie.setu.languagelearnerapp.R
 import ie.setu.languagelearnerapp.model.WordModel
 import android.widget.ImageButton
 import androidx.core.content.ContextCompat
+import android.speech.tts.TextToSpeech
+import java.util.Locale
 
 class WordAdapter(
         var words: MutableList<WordModel>,
@@ -17,6 +19,8 @@ class WordAdapter(
         private val onEditClick: (WordModel) -> Unit,
         private val onFavoriteClick: (String) -> Unit
     ) : RecyclerView.Adapter<WordAdapter.WordViewHolder>() {
+    private var tts: TextToSpeech? = null
+
     fun updateList(newWords: List<WordModel>) {
         words.clear()
         words.addAll(newWords)
@@ -30,9 +34,18 @@ class WordAdapter(
         val btnDelete: Button = itemView.findViewById(R.id.btnDelete)
         val btnFavorite: ImageButton = itemView.findViewById(R.id.btnFavorite)
         val btnEdit: Button = itemView.findViewById(R.id.btnEdit)
+        val btnSpeak: ImageButton = itemView.findViewById(R.id.btnSpeak)
+
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): WordViewHolder {
+        if (tts == null) {
+            tts = TextToSpeech(parent.context) { status ->
+                if (status == TextToSpeech.SUCCESS) {
+                    tts?.language = Locale.US
+                }
+            }
+        }
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.card_word, parent, false)
         return WordViewHolder(view)
@@ -59,6 +72,9 @@ class WordAdapter(
             onFavoriteClick(word.id)
         }
         holder.btnEdit.setOnClickListener { onEditClick(word) }
+        holder.btnSpeak.setOnClickListener {
+            tts?.speak(word.word, TextToSpeech.QUEUE_FLUSH, null, word.id)
+        }
 
     }
         override fun getItemCount(): Int = words.size
