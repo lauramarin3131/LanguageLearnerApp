@@ -15,6 +15,7 @@ class EditWordActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_add_word)
+        WordRepository.load(this)
 
         title = "Edit Word"
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
@@ -23,36 +24,55 @@ class EditWordActivity : AppCompatActivity() {
         val etTranslation = findViewById<EditText>(R.id.etTranslation)
         val spinnerLanguage = findViewById<Spinner>(R.id.spinnerLanguage)
         val pickerLevel = findViewById<NumberPicker>(R.id.pickerLevel)
+        pickerLevel.minValue = 1
+        pickerLevel.maxValue = 5
+
         val btnSave = findViewById<Button>(R.id.btnSaveWord)
 
         val languages = listOf("English 🇬🇧", "Spanish 🇪🇸", "French 🇫🇷", "German 🇩🇪", "Italian 🇮🇹")
         spinnerLanguage.adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, languages)
 
-        oldWord = intent.getSerializableExtra("word") as WordModel
-        if (oldWord == null) {
+        val incoming = intent.getSerializableExtra("word") as? WordModel
+        if (incoming == null) {
             finish()
             return
         }
+        oldWord = incoming
+
         etWord.setText(oldWord.word)
         etTranslation.setText(oldWord.translation)
-        spinnerLanguage.setSelection(languages.indexOf(oldWord.language))
-        pickerLevel.value = oldWord.level.toInt()
+        val langIndex = languages.indexOf(oldWord.language).coerceAtLeast(0)
+        spinnerLanguage.setSelection(langIndex)
+
+        pickerLevel.value = oldWord.level.toIntOrNull() ?: 1
 
         btnSave.setOnClickListener {
+            val newWordText = etWord.text.toString().trim()
+            val newTranslationText = etTranslation.text.toString().trim()
+
+            if (newWordText.isBlank()) {
+                etWord.error = "Required"
+                return@setOnClickListener
+            }
+            if (newTranslationText.isBlank()) {
+                etTranslation.error = "Required"
+                return@setOnClickListener
+            }
+
             val duplicate = WordRepository.getAll().any {
-                it.word.equals(etWord.text.toString(), ignoreCase = true) && it != oldWord
+                it.id != oldWord.id && it.word.equals(newWordText, ignoreCase = true)
             }
             if (duplicate) {
                 etWord.error = "Word already exists"
                 return@setOnClickListener
             }
-            val updated = WordModel(
-                etWord.text.toString(),
-                etTranslation.text.toString(),
-                spinnerLanguage.selectedItem.toString(),
-                pickerLevel.value.toString()
+            val updated = oldWord.copy(
+                word = etWord.text.toString().trim(),
+                translation = etTranslation.text.toString().trim(),
+                language = spinnerLanguage.selectedItem.toString(),
+                level = pickerLevel.value.toString()
             )
-            WordRepository.updateWord(this, oldWord, updated)
+            WordRepository.updateWord(this,  updated)
             Snackbar.make(it, "Word updated!", Snackbar.LENGTH_SHORT).show()
             finish()
         }

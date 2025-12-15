@@ -78,11 +78,12 @@ object WordRepository {
         save(context)
     }
     fun toggleFavorite(context: Context, id: String) {
-        val index = words.indexOfFirst { it.id ==id }
-        if (index != -1)  return
+        val index = words.indexOfFirst { it.id == id }
+        if (index == -1) return
 
         words[index].isFavorite = !words[index].isFavorite
         save(context)
+        Timber.Forest.i("Favorite toggled for: ${words[index].word}")
     }
     fun deleteWord(context: Context, id:String) {
         val index = words.indexOfFirst { it.id == id }

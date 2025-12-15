@@ -58,9 +58,7 @@ class WordAdapter(
         holder.btnFavorite.setOnClickListener {
             onFavoriteClick(word.id)
         }
-        holder.btnEdit.setOnClickListener {
-            onEditClick(word)
-        }
+        holder.btnEdit.setOnClickListener { onEditClick(word) }
 
     }
         override fun getItemCount(): Int = words.size

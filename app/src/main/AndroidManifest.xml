@@ -12,6 +12,8 @@
         android:theme="@style/Theme.LanguageLearner">
         <activity android:name=".view.AddWordActivity" />
         <activity android:name=".view.WordListActivity" />
+        <activity android:name=".view.EditWordActivity" />
+
         <activity
             android:name=".LanguageLearnerApp"
             android:exported="true">
