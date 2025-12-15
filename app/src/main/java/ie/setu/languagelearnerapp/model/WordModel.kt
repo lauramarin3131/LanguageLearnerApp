@@ -9,5 +9,6 @@ data class WordModel (
     var language: String = "",
     var level: String = "",
     var date: String = "",
-    var isFavorite: Boolean = false
+    var isFavorite: Boolean = false,
+    var imageUri: String? = null
 ): Serializable

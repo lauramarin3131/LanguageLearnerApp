@@ -49,7 +49,7 @@ object WordRepository {
 
     fun getAll(): List<WordModel> = words
 
-    fun addWord(context: Context, word: WordModel) {
+    fun addWord(context: Context, word: WordModel, imageUri: String?) {
 
         if (word.word.isBlank() || word.translation.isBlank()) {
              Timber.Forest.w("Attempted to add invalid word")

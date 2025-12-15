@@ -15,9 +15,14 @@ import ie.setu.languagelearnerapp.model.WordModel
 import android.widget.Toast
 import ie.setu.languagelearnerapp.R.*
 import ie.setu.languagelearnerapp.repository.WordRepository
+import android.net.Uri
+import android.app.Activity
+import android.content.Intent
 
 
 class AddWordActivity : AppCompatActivity() {
+    private var selectedImageUri: String? = null
+
     companion object {
         val words = ArrayList<WordModel>()
     }
@@ -40,6 +45,7 @@ class AddWordActivity : AppCompatActivity() {
         val spinnerLanguage = findViewById<Spinner>(id.spinnerLanguage)
         val pickerLevel = findViewById<NumberPicker>(id.pickerLevel)
         val btnSave = findViewById<Button>(id.btnSaveWord)
+        val btnAddImage = findViewById<Button>(id.btnAddImage)
         val btnCancel = findViewById<Button>(id.btnCancel)
         val languages = listOf("English 🇬🇧", "Spanish 🇪🇸", "French 🇫🇷", "German 🇩🇪", "Italian 🇮🇹")
         val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, languages)
@@ -74,7 +80,8 @@ class AddWordActivity : AppCompatActivity() {
                                                             translation = t,
                                                             language = lg,
                                                             level = lv,
-                                                            date = System.currentTimeMillis().toString())
+                                                            date = System.currentTimeMillis().toString()),
+                                                            imageUri = selectedImageUri
                 )
                 Snackbar.make(it, "Word added successfully!", Snackbar.LENGTH_SHORT).show()
                 finish()
@@ -82,6 +89,21 @@ class AddWordActivity : AppCompatActivity() {
         }
 
         btnCancel.setOnClickListener { finish() }
+        btnAddImage.setOnClickListener {
+            val intent = Intent(Intent.ACTION_PICK)
+            intent.type = "image/*"
+            startActivityForResult(intent, 1001)
+        }
+
     }
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if (requestCode == 1001 && resultCode == Activity.RESULT_OK) {
+            val uri: Uri? = data?.data
+            selectedImageUri = uri?.toString()
+        }
+    }
+
 }
 
