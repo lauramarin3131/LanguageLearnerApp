@@ -90,8 +90,10 @@ class AddWordActivity : AppCompatActivity() {
 
         btnCancel.setOnClickListener { finish() }
         btnAddImage.setOnClickListener {
-            val intent = Intent(Intent.ACTION_PICK)
-            intent.type = "image/*"
+            val intent =  Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
+                addCategory(Intent.CATEGORY_OPENABLE)
+                type = "image/*"
+            }
             startActivityForResult(intent, 1001)
         }
 
@@ -100,8 +102,13 @@ class AddWordActivity : AppCompatActivity() {
         super.onActivityResult(requestCode, resultCode, data)
 
         if (requestCode == 1001 && resultCode == Activity.RESULT_OK) {
-            val uri: Uri? = data?.data
-            selectedImageUri = uri?.toString()
+            val uri = data?.data ?: return
+            contentResolver.takePersistableUriPermission(
+                uri,
+                Intent.FLAG_GRANT_READ_URI_PERMISSION
+            )
+
+            selectedImageUri = uri.toString()
         }
     }
 

@@ -59,7 +59,8 @@ object WordRepository {
              Timber.Forest.w("Duplicate word: ${word.word}")
              return
         }
-        words.add(word)
+        val wordWithImage = word.copy(imageUri = imageUri)
+        words.add(wordWithImage)
         save(context)
         Timber.Forest.i("Word added: ${word.word}")
     }
