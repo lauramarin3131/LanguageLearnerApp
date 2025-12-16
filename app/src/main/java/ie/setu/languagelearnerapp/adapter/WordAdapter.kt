@@ -77,9 +77,7 @@ class WordAdapter(
         holder.btnFavorite.setOnClickListener {
             onFavoriteClick(word.id)
         }
-        holder.itemView.setOnClickListener {
-            onEditClick(word)
-        }
+
         holder.btnEdit.setOnClickListener { onEditClick(word) }
         holder.btnDelete.setOnClickListener {
             onDeleteClick(word.id)

@@ -1,5 +1,8 @@
 package ie.setu.languagelearnerapp.view
 
+import android.app.Activity
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
@@ -11,11 +14,23 @@ import ie.setu.languagelearnerapp.repository.WordRepository
 class EditWordActivity : AppCompatActivity() {
 
     private lateinit var oldWord: WordModel
+    private var selectedImageUri: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_add_word)
         WordRepository.load(this)
+
+        val btnAddImage = findViewById<Button>(R.id.btnAddImage)
+        btnAddImage.setOnClickListener {
+            val intent = Intent(Intent.ACTION_PICK)
+            intent.type = "image/*"
+            startActivityForResult(intent, 1001)
+        }
+
+        findViewById<Button>(R.id.btnCancel).setOnClickListener {
+            finish()
+        }
 
         title = "Edit Word"
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
@@ -71,11 +86,19 @@ class EditWordActivity : AppCompatActivity() {
                 translation = etTranslation.text.toString().trim(),
                 language = spinnerLanguage.selectedItem.toString(),
                 level = pickerLevel.value.toString(),
-                imageUri = oldWord.imageUri
+                imageUri = selectedImageUri ?: oldWord.imageUri
             )
             WordRepository.updateWord(this,  updated)
             Snackbar.make(it, "Word updated!", Snackbar.LENGTH_SHORT).show()
             finish()
         }
     }
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if (requestCode == 1001 && resultCode == Activity.RESULT_OK) {
+            selectedImageUri = data?.data?.toString()
+        }
+    }
+
 }
