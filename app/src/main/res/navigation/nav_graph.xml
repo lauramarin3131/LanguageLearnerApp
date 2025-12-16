@@ -1,6 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/nav_graph">
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/wordListFragment">
+    <fragment
+        android:id="@+id/wordListFragment"
+        android:name="ie.setu.languagelearnerapp.view.WordListFragment"
+        android:label="Word List">
 
+        <action
+            android:id="@+id/action_list_to_add"
+            app:destination="@id/addWordFragment" />
+
+        <action
+            android:id="@+id/action_list_to_edit"
+            app:destination="@id/editWordFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/addWordFragment"
+        android:name="ie.setu.languagelearnerapp.view.AddWordFragment"
+        android:label="Add Word" />
+
+    <fragment
+        android:id="@+id/editWordFragment"
+        android:name="ie.setu.languagelearnerapp.view.EditWordFragment"
+        android:label="Edit Word" />
 </navigation>
